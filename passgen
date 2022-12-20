@@ -1,0 +1,48 @@
+#!/bin/bash
+var_def () {
+            COUNT=50
+            KEY=20
+        gen ;
+}
+
+test_var () {
+COUNT=$1
+KEY=$2
+    if [ -z "$1" ] || [ -z "$2" ] ;
+            then
+                var_def ;
+            else
+                gen $@ ;
+
+    fi
+}
+
+gen () {
+    for i in $(seq $COUNT); do
+        dd if=/dev/urandom bs=1 count=1024 2>/dev/null | base64 -w 0 | cut -c1-$KEY
+    done
+}
+
+help_passgen () {
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] ;
+        then
+            echo "
+        Формат команды:
+        passgen 10 15
+
+        passgen ARG1 ARG2
+                ARG1 - количество паролей
+                ARG2 - количество символов в пароле
+
+                При отсутствии аргументов используются следующие значения по умолчанию:
+                ARG1=50
+                ARG2=20
+                "
+        else
+        test_var $@ ;
+    fi
+}
+
+help_passgen $@
+
+exit
